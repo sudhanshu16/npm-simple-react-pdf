@@ -33,8 +33,7 @@ var SimplePDF = function (_React$Component) {
     _classCallCheck(this, SimplePDF);
 
     // bind
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SimplePDF).call(this, props));
+    var _this = _possibleConstructorReturn(this, (SimplePDF.__proto__ || Object.getPrototypeOf(SimplePDF)).call(this, props));
 
     _this.loadPDF = _this.loadPDF.bind(_this);
     return _this;
@@ -43,9 +42,11 @@ var SimplePDF = function (_React$Component) {
   _createClass(SimplePDF, [{
     key: 'loadPDF',
     value: function loadPDF() {
+      var _this2 = this;
 
       // get node for this react component
-      var node = _reactDom2.default.findDOMNode(this).getElementsByClassName("S-PDF-ID")[0];
+      if (this.nodeRef === null) return;
+      var node = this.nodeRef;
 
       // clean for update
       node.innerHTML = "";
@@ -88,6 +89,7 @@ var SimplePDF = function (_React$Component) {
               viewport: viewport
             };
             page.render(renderContext);
+            _this2.props.onLoad && _this2.props.onLoad();
           });
         }
       });
@@ -95,10 +97,14 @@ var SimplePDF = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
+
       return _react2.default.createElement(
         'div',
         { className: 'SimplePDF' },
-        _react2.default.createElement('div', { className: 'S-PDF-ID' })
+        _react2.default.createElement('div', { className: 'S-PDF-ID', ref: function ref(div) {
+            _this3.nodeRef = div;
+          } })
       );
     }
   }, {

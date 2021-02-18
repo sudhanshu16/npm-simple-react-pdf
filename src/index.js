@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PDF from 'pdfjs-dist/build/pdf.combined.js';
 
 export default class SimplePDF extends React.Component {
+  nodeRef;
 
   constructor(props) {
     super(props);
@@ -14,7 +15,8 @@ export default class SimplePDF extends React.Component {
   loadPDF() {
 
     // get node for this react component
-    var node = ReactDOM.findDOMNode(this).getElementsByClassName("S-PDF-ID")[0];
+    if (this.nodeRef === null) return;
+    var node = this.nodeRef;
 
     // clean for update
     node.innerHTML = "";
@@ -26,7 +28,7 @@ export default class SimplePDF extends React.Component {
     node.style.overflowY = "scroll";
     node.style.padding = '0px';
 
-    PDF.getDocument(this.props.file).then(function(pdf) {
+    PDF.getDocument(this.props.file).then((pdf) => {
 
       // no scrollbar if pdf has only one page
       if (pdf.numPages===1) {
@@ -35,7 +37,7 @@ export default class SimplePDF extends React.Component {
 
       for (var id=1,i=1; i<=pdf.numPages; i++) {
 
-        pdf.getPage(i).then(function(page) {
+        pdf.getPage(i).then((page) => {
 
           // calculate scale according to the box size
           var boxWidth = node.clientWidth;
@@ -57,6 +59,7 @@ export default class SimplePDF extends React.Component {
             viewport      : viewport
           };
           page.render(renderContext);
+          this.props.onLoad && this.props.onLoad()
         });
       }
     });
@@ -65,7 +68,7 @@ export default class SimplePDF extends React.Component {
   render() {
     return (
       <div className="SimplePDF">
-        <div className="S-PDF-ID"></div>
+        <div className="S-PDF-ID" ref={(div) => { this.nodeRef = div; }}></div>
       </div>
     );
   }
