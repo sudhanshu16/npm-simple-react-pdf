@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6,15 +6,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = require('react-dom');
+var _reactDom = require("react-dom");
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _pdfCombined = require('pdfjs-dist/build/pdf.combined.js');
+var _pdfCombined = require("pdfjs-dist/build/pdf.combined.js");
 
 var _pdfCombined2 = _interopRequireDefault(_pdfCombined);
 
@@ -40,7 +40,7 @@ var SimplePDF = function (_React$Component) {
   }
 
   _createClass(SimplePDF, [{
-    key: 'loadPDF',
+    key: "loadPDF",
     value: function loadPDF() {
       var _this2 = this;
 
@@ -56,64 +56,62 @@ var SimplePDF = function (_React$Component) {
       node.style.height = "100%";
       node.style.overflowX = "hidden";
       node.style.overflowY = "scroll";
-      node.style.padding = '0px';
+      node.style.padding = "0px";
 
-      _pdfCombined2.default.getDocument(this.props.file).then(function (pdf) {
-
+      _pdfCombined2.default.getDocument(this.props.file).then(async function (pdf) {
         // no scrollbar if pdf has only one page
         if (pdf.numPages === 1) {
           node.style.overflowY = "hidden";
         }
 
-        for (var id = 1, i = 1; i <= pdf.numPages; i++) {
+        for (var id = 1, i = pdf.numPages; i > 0; i--, id++) {
+          var page = await pdf.getPage(id);
+          var boxWidth = node.clientWidth;
+          var pdfWidth = page.getViewport(1).width;
+          var scale = boxWidth / pdfWidth;
+          var viewport = page.getViewport(scale);
 
-          pdf.getPage(i).then(function (page) {
+          // set canvas for page
+          var canvas = document.createElement("canvas");
+          canvas.id = "page-" + id;
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          node.appendChild(canvas);
 
-            // calculate scale according to the box size
-            var boxWidth = node.clientWidth;
-            var pdfWidth = page.getViewport(1).width;
-            var scale = boxWidth / pdfWidth;
-            var viewport = page.getViewport(scale);
-
-            // set canvas for page
-            var canvas = document.createElement('canvas');
-            canvas.id = "page-" + id;id++;
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            node.appendChild(canvas);
-
-            // get context and render page
-            var context = canvas.getContext('2d');
-            var renderContext = {
-              canvasContext: context,
-              viewport: viewport
-            };
-            page.render(renderContext);
-            _this2.props.onLoad && _this2.props.onLoad();
-          });
+          // get context and render page
+          var context = canvas.getContext("2d");
+          var renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          page.render(renderContext);
+          if (i === 1) _this2.props.onLoad && _this2.props.onLoad();
         }
       });
     }
   }, {
-    key: 'render',
+    key: "render",
     value: function render() {
       var _this3 = this;
 
       return _react2.default.createElement(
-        'div',
-        { className: 'SimplePDF' },
-        _react2.default.createElement('div', { className: 'S-PDF-ID', ref: function ref(div) {
+        "div",
+        { className: "SimplePDF" },
+        _react2.default.createElement("div", {
+          className: "S-PDF-ID",
+          ref: function ref(div) {
             _this3.nodeRef = div;
-          } })
+          }
+        })
       );
     }
   }, {
-    key: 'componentDidMount',
+    key: "componentDidMount",
     value: function componentDidMount() {
       this.loadPDF();
     }
   }, {
-    key: 'componentDidUpdate',
+    key: "componentDidUpdate",
     value: function componentDidUpdate() {
       this.loadPDF();
     }
