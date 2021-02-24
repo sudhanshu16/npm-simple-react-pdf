@@ -81,4 +81,4 @@ export default class SimplePDF extends React.Component {
   }
 }
 
-module.exports = { SimplePDF: SimplePDF };
+module.exports = SimplePDF

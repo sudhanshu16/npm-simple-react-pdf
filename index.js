@@ -123,4 +123,4 @@ var SimplePDF = function (_React$Component) {
 exports.default = SimplePDF;
 
 
-module.exports = { SimplePDF: SimplePDF };
+module.exports = SimplePDF;
